@@ -6,18 +6,18 @@ import 'dart:convert';
 import 'connector.dart';
 import 'score_row.dart';
 
-class MatchResult extends StatefulWidget{
+class ScoreBoard extends StatefulWidget{
   final Connector connector = const Connector();
 
-  const MatchResult({super.key});
+  const ScoreBoard({super.key});
 
   @override
-  State<MatchResult> createState() => MatchResultState();
+  State<ScoreBoard> createState() => ScoreBoardState();
 }
 
 bool check = true;
 
-class MatchResultState extends State<MatchResult>{
+class ScoreBoardState extends State<ScoreBoard>{
   String timer = "";
   late Future<int> generated;
   bool error = false;

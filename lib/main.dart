@@ -6,7 +6,7 @@ import 'dart:convert';
 
 import 'connector.dart';
 import 'score_row.dart';
-import 'match_result.dart';
+import 'score_board.dart';
 import 'games.dart';
 
 void main() {
@@ -19,8 +19,8 @@ void main() {
 }
 
 final routes = RouteMap(routes: {
+  "/": (_) => const MaterialPage(child: TV()),
   "/score_board": (_) => const MaterialPage(child: ScoreBoard()),
-  "/": (_) => const MaterialPage(child: MatchResult()),
   "/game_selecter": (route) => MaterialPage(child: GameSelecter(id: route.queryParameters["id"]!)),
   "/jump": (route) => MaterialPage(child: JumpPage(id: route.queryParameters["id"]!)),
   "/dribble": (route) => MaterialPage(child: DribblePage(id: route.queryParameters["id"]!)),
@@ -28,15 +28,15 @@ final routes = RouteMap(routes: {
   "/accuracy": (route) => MaterialPage(child: AccuracyPage(id: route.queryParameters["id"]!)),
 });
 
-class ScoreBoard extends StatefulWidget{
+class TV extends StatefulWidget{
   final Connector connector = const Connector();
-  const ScoreBoard({super.key});
+  const TV({super.key});
 
   @override
-  State<ScoreBoard> createState() => ScoreBoardState();
+  State<TV> createState() => TVState();
 }
 
-class ScoreBoardState extends State<ScoreBoard>{
+class TVState extends State<TV>{
   List<ScoreRow> cells = [];
   String timer = "";
 

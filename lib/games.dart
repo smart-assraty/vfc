@@ -4,7 +4,7 @@ import 'package:http/http.dart';
 import 'dart:convert';
 
 import 'connector.dart';
-import 'match_result.dart';
+import 'score_board.dart';
 
 class GameSelecter extends StatelessWidget{
   final String id;
