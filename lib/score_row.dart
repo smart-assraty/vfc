@@ -12,7 +12,7 @@ class ScoreRow{
 
   factory ScoreRow.fromJson(dynamic body){
     debugPrint(body.toString());
-    return ScoreRow(playerNumber: body["player_number"], photo: body["photo_url"], lastName: body["last_name"], jump: body["jump"], dribbling: body["dribbling"], accuracy: body["accuracy"], pass: body["pass"]);
+    return ScoreRow(playerNumber: body["player_number"], photo: body["photo_url"], lastName: body["last_name"], jump: body["jump"], dribbling: body["dribbling"].toString(), accuracy: body["accuracy"].toString(), pass: body["pass"].toString());
   }
 
   Widget getPlayerNumber(){
