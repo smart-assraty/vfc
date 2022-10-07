@@ -7,8 +7,8 @@ import 'connector.dart';
 import 'match_result.dart';
 
 class JumpPage extends StatefulWidget{
-  late String id;
-  JumpPage({super.key, required this.id});
+  final String id;
+  const JumpPage({super.key, required this.id});
 
   @override
   State<JumpPage> createState() => JumpPageState();
@@ -43,23 +43,28 @@ class JumpPageState extends State<JumpPage>{
               ],
             ),
           ),
-          OutlinedButton(onPressed:() => 
-          (tries != "5/5") ? setState(() {
-            tries = "$triesInt/5";
-            controller.text = "";
-            triesInt++;
-          }) : 
-          setState(() {
-            post(Uri.parse("$server:8000/jump_result/"),
-              headers: {"Content-type": "application/json"},
-              body: json.encode({
-                "player_id": widget.id,
-                "jump_height": int.parse(controller.text),
-              })
-            );
-            Routemaster.of(context).push("/score_board");
-            check = false;
-          }),
+          OutlinedButton(onPressed:() async {
+            if(tries != "5/5"){
+              var response = await post(Uri.parse("$server:8000/jump_result/"),
+                headers: {"Content-type": "application/json"},
+                body: json.encode({
+                  "player_id": int.parse(widget.id),
+                  "jump_height": int.parse(controller.text),
+                })
+              );
+              debugPrint(response.body);
+              setState(() {
+                tries = "$triesInt/5";
+                controller.text = "";
+                triesInt++;
+              });
+            } else {
+                setState(() {
+                  Routemaster.of(context).push("/score_board");
+                  check = false;
+                });
+            }
+          },
           child: const Text("Done")),
         ],
       ),
@@ -68,8 +73,8 @@ class JumpPageState extends State<JumpPage>{
 }
 
 class DribblePage extends StatefulWidget{
-  late String id;
-  DribblePage({super.key, required this.id});
+  final String id;
+  const DribblePage({super.key, required this.id});
 
   @override
   State<DribblePage> createState() => DribblePageState();
@@ -90,7 +95,7 @@ class DribblePageState extends State<DribblePage>{
           const Image(image: AssetImage("visa.png"), height: 170, width: 300,)],),
       body: Column(
         children: [
-          const Text("Jump"),
+          const Text("Dribbling"),
           Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -111,17 +116,34 @@ class DribblePageState extends State<DribblePage>{
             ],
           ),
           ),
-          OutlinedButton(onPressed:() => 
-          (tries != "5/5") ? (() {
-            tries = "$triesInt/5";
-            controllerOne.text = "";
-            controllerTwo.text = "";
-            triesInt++;
-          }) : 
-          setState(() {
-            Routemaster.of(context).push("/score_board");
-            check = false;
-          }),
+          OutlinedButton(onPressed:() async {
+            try{
+              if(tries != "5/5"){
+                var response = await post(Uri.parse("$server:8000/dribbling_result/"),
+                  headers: {"Content-type": "application/json"},
+                  body: json.encode({
+                  "player_id": int.parse(widget.id),
+                  "time": int.parse(controllerOne.text),
+                  "cone": int.parse(controllerTwo.text),
+                  })
+                );
+                debugPrint(response.body);
+                setState(() {
+                  tries = "$triesInt/5";
+                  controllerOne.text = "";
+                  controllerTwo.text = "";
+                  triesInt++;
+                });
+              } else {
+                  setState(() {
+                    Routemaster.of(context).push("/score_board");
+                    check = false;
+                  });
+              }
+            } catch(e){
+              debugPrint("$e");
+            }
+          },
           child: const Text("Done")),
         ],
       ),
@@ -130,8 +152,8 @@ class DribblePageState extends State<DribblePage>{
 }
 
 class AccuracyPage extends StatefulWidget{
-  late String id;
-  AccuracyPage({super.key, required this.id});
+  final String id;
+  const AccuracyPage({super.key, required this.id});
 
   @override
   State<AccuracyPage> createState() => AccuracyPageState();
@@ -166,16 +188,28 @@ class AccuracyPageState extends State<AccuracyPage>{
               ],
             ),
           ),
-          OutlinedButton(onPressed:() => 
-          (tries != "5/5") ? (() {
-            tries = "$triesInt/5";
-            controller.text = "";
-            triesInt++;
-          }) : 
-          setState(() {
-            Routemaster.of(context).push("/score_board");
-            check = false;
-          }),
+          OutlinedButton(onPressed:() async {
+            if(tries != "5/5"){
+              var response = await post(Uri.parse("$server:8000/accuracy_result/"),
+                headers: {"Content-type": "application/json"},
+                body: json.encode({
+                "player_id": int.parse(widget.id),
+                "hits": int.parse(controller.text),
+              })
+              );
+              debugPrint(response.body);
+              setState(() {
+                tries = "$triesInt/5";
+                controller.text = "";
+                triesInt++;
+              });
+            } else {
+                setState(() {
+                  Routemaster.of(context).push("/score_board");
+                  check = false;
+                });
+            }
+          },
           child: const Text("Done")),
         ],
       ),
@@ -184,8 +218,8 @@ class AccuracyPageState extends State<AccuracyPage>{
 }
 
 class PassPage extends StatefulWidget{
-  late String id;
-  PassPage({super.key, required this.id});
+  final String id;
+  const PassPage({super.key, required this.id});
 
   @override
   State<PassPage> createState() => PassPageState();
@@ -220,16 +254,28 @@ class PassPageState extends State<PassPage>{
               ],
             ),
           ),
-          OutlinedButton(onPressed:() => 
-          (tries != "5/5") ? (() {
-            tries = "$triesInt/5";
-            controller.text = "";
-            triesInt++;
-          }) : 
-          setState(() {
-            Routemaster.of(context).push("/score_board");
-            check = false;
-          }),
+          OutlinedButton(onPressed:()async {
+            if(tries != "5/5"){
+              var response = await post(Uri.parse("$server:8000/pass_result/"),
+                headers: {"Content-type": "application/json"},
+                body: json.encode({
+                "player_id": int.parse(widget.id),
+                "hits": int.parse(controller.text),
+              })
+              );
+              debugPrint(response.body);
+              setState(() {
+                tries = "$triesInt/5";
+                controller.text = "";
+                triesInt++;
+              });
+            } else {
+                setState(() {
+                  Routemaster.of(context).push("/score_board");
+                  check = false;
+                });
+            }
+          },
           child: const Text("Done")),
         ],
       ),

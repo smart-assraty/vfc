@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:timer_builder/timer_builder.dart';
 import 'package:routemaster/routemaster.dart';
-import 'package:http/http.dart';
-import 'dart:convert';
 
 import 'connector.dart';
 import 'score_row.dart';
@@ -22,6 +20,7 @@ class MatchResultState extends State<MatchResult>{
   List<ScoreRow> cells = [];
   String timer = "";
   late Future<int> generated;
+  bool error = false;
 
   @override
   void initState() {
@@ -34,8 +33,15 @@ class MatchResultState extends State<MatchResult>{
     TextEditingController controller = TextEditingController();
     return Scaffold(
       appBar: AppBar(
-        title: const Text("operator 1"),
-        actions: const [Image(image: AssetImage("visa.png"), height: 170, width: 300,)],),
+        toolbarHeight: 90,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const [
+            Text("operator 1"),
+            Image(image: AssetImage("visa.png"), height: 90,)
+          ],
+        ),
+      ), 
      body: Container(
         decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -62,42 +68,44 @@ class MatchResultState extends State<MatchResult>{
                 child: retail()
               )
             ),
-            TextFormField(
-              controller: controller,
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                hintText: "0000000000",
+            Padding(
+              padding: const EdgeInsets.fromLTRB(100, 10, 100, 0),
+              child: FormField<bool>(builder: (state){
+                return Column(
+                  children: [
+                    TextFormField(
+                      controller: controller,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "ID of player",
+                        hintStyle: TextStyle(fontSize: 24),
+                      ),
+                    ),
+                    (state.hasError) ? Text(state.errorText ?? "", style: TextStyle(color: Theme.of(context).errorColor,)) : const SizedBox(),
+                    Align(
+                alignment: Alignment.centerRight,
+                child: OutlinedButton(
+                  onPressed: () async {
+                    var response = await widget.connector.addPlayer(controller.text);
+                    if(response == 200){
+                    } else {
+                    }
+                  }, 
+                  child: const Text("Add Player", style: TextStyle(fontSize: 16),)
+                ),
               ),
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: OutlinedButton(
-                onPressed: () async {
-                  var response = await post(Uri.parse("$server:8000/add_player/?id=${controller.text}"));
-                  debugPrint("${response.body} ${response.statusCode}");
-                  if(response.statusCode == 200){
-                    setState(() {
-                      dynamic theJson = json.decode(response.body);
-                      cells.add(ScoreRow(playerNumber: theJson["player_number"], photo: null, lastName: "", jump: 0, dribbling: "0", accuracy: "0", pass: "0"));
-                      dataRows.add(DataRow(
-          onLongPress: () => showDialog(context: context, builder: (context){
-            return Card(
-              child: Row(
-                children: [
-                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/jump/?id=${cells.last.playerNumber}"), child: const Text("Jump")),
-                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/dribble/?id=${cells.last.playerNumber}"), child: const Text("Dribble")),
-                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/pass/?id=${cells.last.playerNumber}"), child: const Text("Pass")),
-                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/accuracy/?id=${cells.last.playerNumber}"), child: const Text("Accuracy")),
-                ],
-              ),
-            );
-          }),
-          cells: [DataCell(cells.last.getPlayerNumber()), DataCell(cells.last.getJump()), DataCell(cells.last.getDribbling()), DataCell(cells.last.getAccuracy()), DataCell(cells.last.getPass()), DataCell(cells.last.getPermissionButton(check))],),);
-                    });
-                  }
-                }, 
-                child: const Text("Add Player")
-              ),
+                  ],
+                );
+              },
+              validator: (value) {
+                if(error){
+                  debugPrint(error.toString());
+                  return "No such player or player is already on the match";
+                } else {
+                  debugPrint(error.toString());
+                  return null;
+                }
+              },),
             ),
           ],
         )
@@ -109,13 +117,13 @@ class MatchResultState extends State<MatchResult>{
 
   Widget table(){
     return DataTable(
-      dataRowHeight: 70,
+      dataRowHeight: 50,
       columns: const [
-        DataColumn(label: Text("")),
-        DataColumn(label: Text("")),
-        DataColumn(label: Text("")),
-        DataColumn(label: Text("")),
-        DataColumn(label: Text("")),
+        DataColumn(label: Text("ID")),
+        DataColumn(label: Text("Jump")),
+        DataColumn(label: Text("Dribble")),
+        DataColumn(label: Text("Pass")),
+        DataColumn(label: Text("Accuracy")),
         DataColumn(label: Text("")),
       ], 
       rows: dataRows
@@ -146,24 +154,24 @@ class MatchResultState extends State<MatchResult>{
     try{
       var data = await widget.connector.getScoreBoardData();
       timer = "Match #00${data["id"]} - ${DateTime.now().hour}:${DateTime.now().minute}";
-      for(int index = 0; index < (data["players"] as Map<String, dynamic>).length; index++){
-        cells.add(ScoreRow.fromJson((data["players"] as Map<String, dynamic>).entries.elementAt(index).value));
-      }
+      (data["players"] as Map<String, dynamic>).forEach((key, value) {
+        cells.add(ScoreRow.fromJson({key: value})); 
+      }); 
       for(int index = 0; index < cells.length; index++){
         dataRows.add(DataRow(
           onLongPress: () => showDialog(context: context, builder: (context){
             return Card(
               child: Row(
                 children: [
-                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/jump/?id=${cells.elementAt(index).playerNumber}"), child: const Text("Jump")),
-                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/dribble/?id=${cells.elementAt(index).playerNumber}"), child: const Text("Dribble")),
-                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/pass/?id=${cells.elementAt(index).playerNumber}"), child: const Text("Pass")),
-                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/accuracy/?id=${cells.elementAt(index).playerNumber}"), child: const Text("Accuracy")),
+                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/jump/?id=${cells.elementAt(index).id}"), child: const Text("Jump")),
+                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/dribble/?id=${cells.elementAt(index).id}"), child: const Text("Dribble")),
+                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/pass/?id=${cells.elementAt(index).id}"), child: const Text("Pass")),
+                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/accuracy/?id=${cells.elementAt(index).id}"), child: const Text("Accuracy")),
                 ],
               ),
             );
           }),
-          cells: [DataCell(cells.elementAt(index).getPlayerNumber()), DataCell(cells.elementAt(index).getJump()), DataCell(cells.elementAt(index).getDribbling()), DataCell(cells.elementAt(index).getAccuracy()), DataCell(cells.elementAt(index).getPass()), DataCell(cells.elementAt(index).getPermissionButton(check))],),);
+          cells: [DataCell(cells.elementAt(index).getPlayerNumber()), DataCell(cells.elementAt(index).getJump()), DataCell(cells.elementAt(index).getDribbling()), DataCell(cells.elementAt(index).getPass()), DataCell(cells.elementAt(index).getAccuracy()), DataCell(cells.elementAt(index).getPermissionButton(check))],),);
       }
       return 0;
     } catch (e){

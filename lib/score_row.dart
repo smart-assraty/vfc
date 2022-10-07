@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 
 class ScoreRow{
-  late int playerNumber;
+  late String id;
   late String? photo;
   late String lastName;
   late int jump;
   late String dribbling;
   late String accuracy;
   late String pass;
-  ScoreRow({required this.playerNumber, required this.photo, required this.lastName, required this.jump, required this.dribbling, required this.accuracy, required this.pass});
+  ScoreRow({required this.id, required this.photo, required this.lastName, required this.jump, required this.dribbling, required this.accuracy, required this.pass});
 
-  factory ScoreRow.fromJson(dynamic body){
-    return ScoreRow(playerNumber: body["player_number"], photo: body["photo_url"], lastName: body["last_name"], jump: body["jump"], dribbling: body["dribbling"].toString(), accuracy: body["accuracy"].toString(), pass: body["pass"].toString());
+  factory ScoreRow.fromJson(Map<String, Map<String, dynamic>> body){
+    return ScoreRow(id: body.keys.first, photo: body.values.first["photo_url"], lastName: body.values.first["last_name"], jump: body.values.first["jump"], dribbling: body.values.first["dribbling"].toString(), accuracy: body.values.first["accuracy"].toString(), pass: body.values.first["pass"].toString());
   }
 
   Widget getPlayerNumber(){
-    return Text(playerNumber.toString(), style: const TextStyle(fontSize: 40, color: Colors.white),);
+    return Text(id.toString(), style: const TextStyle(fontSize: 40),);
   }
 
   Widget getLastName(){
-    return Text(lastName, style: const TextStyle(fontSize: 40, color: Colors.white, fontWeight: FontWeight.bold),);
+    return Text(lastName, style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold),);
   }
 
   Widget getPhoto(){
@@ -33,19 +33,19 @@ class ScoreRow{
   }
 
   Widget getJump(){
-    return Text(jump.toString(), style: const TextStyle(fontSize: 30, color: Colors.white),);
+    return Text(jump.toString(), style: const TextStyle(fontSize: 30,),);
   }
 
   Widget getDribbling(){
-    return Text(dribbling, style: const TextStyle(fontSize: 30, color: Colors.white),);
+    return Text(dribbling, style: const TextStyle(fontSize: 30,),);
   }
 
   Widget getAccuracy(){
-    return Text(accuracy, style: const TextStyle(fontSize: 30, color: Colors.white),);
+    return Text(accuracy, style: const TextStyle(fontSize: 30,),);
   }
 
   Widget getPass(){
-    return Text(pass, style: const TextStyle(fontSize: 30, color: Colors.white),);
+    return Text(pass, style: const TextStyle(fontSize: 30,),);
   }
 
   Widget getPermissionButton(bool check){

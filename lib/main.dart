@@ -18,8 +18,8 @@ void main() {
 }
 
 final routes = RouteMap(routes: {
-  "/score_board": (_) => const MaterialPage(child: ScoreBoard()),
-  "/": (_) => const MaterialPage(child: MatchResult()),
+  "/": (_) => const MaterialPage(child: ScoreBoard()),
+  "/score_board": (_) => const MaterialPage(child: MatchResult()),
   "/jump": (route) => MaterialPage(child: JumpPage(id: route.queryParameters["id"]!)),
   "/dribble": (route) => MaterialPage(child: DribblePage(id: route.queryParameters["id"]!)),
   "/pass": (route) => MaterialPage(child: PassPage(id: route.queryParameters["id"]!)),
@@ -123,19 +123,21 @@ class ScoreBoardState extends State<ScoreBoard>{
     try{
       var data = await widget.connector.getScoreBoardData();
       timer = "Match #00${data["id"]} - ${DateTime.now().hour}:${DateTime.now().minute}";
-      for(int index = 0; index < (data["players"] as Map<String, dynamic>).length; index++){
-        cells.add(ScoreRow.fromJson((data["players"] as Map<String, dynamic>).entries.elementAt(index).value));
-      }
+
+      (data["players"] as Map<String, dynamic>).forEach((key, value) {
+        cells.add(ScoreRow.fromJson({key: value})); 
+      }); 
+      
       for(int index = 0; index < cells.length; index++){
         dataRows.add(DataRow(
           onLongPress: () => showDialog(context: context, builder: (context){
             return Card(
               child: Row(
                 children: [
-                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/jump/?id=${cells.elementAt(index).playerNumber}"), child: const Text("Jump")),
-                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/dribble/?id=${cells.elementAt(index).playerNumber}"), child: const Text("Dribble")),
-                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/pass/?id=${cells.elementAt(index).playerNumber}"), child: const Text("Pass")),
-                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/accuracy/?id=${cells.elementAt(index).playerNumber}"), child: const Text("Accuracy")),
+                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/jump/?id=${cells.elementAt(index).id}"), child: const Text("Jump")),
+                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/dribble/?id=${cells.elementAt(index).id}"), child: const Text("Dribble")),
+                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/pass/?id=${cells.elementAt(index).id}"), child: const Text("Pass")),
+                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/accuracy/?id=${cells.elementAt(index).id}"), child: const Text("Accuracy")),
                 ],
               ),
             );
