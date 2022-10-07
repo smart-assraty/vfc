@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'connector.dart';
 
 class ScoreRow{
   late String id;
@@ -24,12 +25,12 @@ class ScoreRow{
 
   Widget getPhoto(){
     return
-    // Image(
-    //   height: 50,
-    //   width: 50,
-    //   image: NetworkImage(photo)
-    // ),
-    const Icon(Icons.person, size: 60,); //TEST
+    Image(
+      height: 50,
+      width: 50,
+      image: NetworkImage("$server/VFC-backend/${photo!}"),
+    );
+    //const Icon(Icons.person, size: 60,); //TEST
   }
 
   Widget getJump(){

@@ -16,16 +16,17 @@ class Connector{
       debugPrint(utf8.decode(response.body.codeUnits));
       return json.decode(utf8.decode(response.body.codeUnits));
     } catch(e){
-      debugPrint("$e");
+      debugPrint("[Error on getScoreBoadr]: $e");
     }
   }
 
   Future<dynamic> addPlayer(String id) async {
     try{
       var response = await post(Uri.parse("$server:8000/add_player/?id=$id"));
+      debugPrint(response.body);
       return response.statusCode;
     } catch(e){
-      debugPrint("$e");
+      debugPrint("[Error on addPlayer]: $e");
     }
   }
 }

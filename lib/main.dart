@@ -1,12 +1,13 @@
 import 'package:url_strategy/url_strategy.dart' show setPathUrlStrategy;
+import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:routemaster/routemaster.dart';
-import 'package:timer_builder/timer_builder.dart';
 import 'package:flutter/material.dart';
+import 'dart:convert';
 
 import 'connector.dart';
 import 'score_row.dart';
 import 'match_result.dart';
-import 'junk.dart';
+import 'games.dart';
 
 void main() {
   setPathUrlStrategy();
@@ -18,8 +19,9 @@ void main() {
 }
 
 final routes = RouteMap(routes: {
-  "/": (_) => const MaterialPage(child: ScoreBoard()),
-  "/score_board": (_) => const MaterialPage(child: MatchResult()),
+  "/score_board": (_) => const MaterialPage(child: ScoreBoard()),
+  "/": (_) => const MaterialPage(child: MatchResult()),
+  "/game_selecter": (route) => MaterialPage(child: GameSelecter(id: route.queryParameters["id"]!)),
   "/jump": (route) => MaterialPage(child: JumpPage(id: route.queryParameters["id"]!)),
   "/dribble": (route) => MaterialPage(child: DribblePage(id: route.queryParameters["id"]!)),
   "/pass": (route) => MaterialPage(child: PassPage(id: route.queryParameters["id"]!)),
@@ -37,13 +39,8 @@ class ScoreBoard extends StatefulWidget{
 class ScoreBoardState extends State<ScoreBoard>{
   List<ScoreRow> cells = [];
   String timer = "";
-  late Future<int> generated;
 
-  @override
-  void initState() {
-    generated = generate();
-    super.initState();
-  }
+  final channel = WebSocketChannel.connect(Uri.parse("ws://185.146.3.41:8000/match_result/"));
 
   @override
   Widget build(BuildContext context){
@@ -81,47 +78,40 @@ class ScoreBoardState extends State<ScoreBoard>{
     );
   }
 
-  List<DataRow> dataRows = [];
-
-  Widget table(){
+  TextStyle tableHeaderStyle = const TextStyle(color: Colors.white, fontSize: 20);
+  Widget table(List<DataRow> dataRows){
     return DataTable(
       dataRowHeight: 70,
-      columns: const [
-        DataColumn(label: Text("#")),
-        DataColumn(label: Text("")),
-        DataColumn(label: Text("Last Name")),
-        DataColumn(label: Text("Jump")),
-        DataColumn(label: Text("Dribbling")),
-        DataColumn(label: Text("Accuracy")),
-        DataColumn(label: Text("Pass")),
+      columns: [
+        DataColumn(label: Text("#", style: tableHeaderStyle)),
+        DataColumn(label: Text(" ", style: tableHeaderStyle)),
+        DataColumn(label: Text("Last Name", style: tableHeaderStyle)),
+        DataColumn(label: Text("Jump", style: tableHeaderStyle)),
+        DataColumn(label: Text("Dribbling", style: tableHeaderStyle)),
+        DataColumn(label: Text("Accuracy", style: tableHeaderStyle)),
+        DataColumn(label: Text("Pass", style: tableHeaderStyle)),
       ], 
+      dividerThickness: 10,
       rows: dataRows
     );
   }
 
   Widget retail(){
-    return TimerBuilder.periodic(
-      const Duration(seconds: 2),
-      builder: (context){
-        return FutureBuilder(
-          future: generated,
-          builder: (context, AsyncSnapshot<dynamic> snapshot){
-            if(snapshot.hasData && snapshot.connectionState == ConnectionState.done){
-              return table();
-            } else {
-              if(cells.isNotEmpty){
-                return table();
-              }
-              return const SizedBox();
-            }
-          });
-      }
-    );
+    return StreamBuilder(
+      stream: channel.stream,
+      builder: (context, AsyncSnapshot<dynamic> snapshot){
+        if(snapshot.hasData){
+          //debugPrint(snapshot.data);
+          return table(generate(json.decode(utf8.decode(snapshot.data.toString().codeUnits))));
+        } else {
+          return const Center(child: CircularProgressIndicator(),);
+        }
+      });
   } 
 
-  Future<int> generate() async {
+  List<DataRow> generate(Map<String, dynamic> data){
     try{
-      var data = await widget.connector.getScoreBoardData();
+      List<DataRow> dataRows = [];
       timer = "Match #00${data["id"]} - ${DateTime.now().hour}:${DateTime.now().minute}";
 
       (data["players"] as Map<String, dynamic>).forEach((key, value) {
@@ -130,25 +120,13 @@ class ScoreBoardState extends State<ScoreBoard>{
       
       for(int index = 0; index < cells.length; index++){
         dataRows.add(DataRow(
-          onLongPress: () => showDialog(context: context, builder: (context){
-            return Card(
-              child: Row(
-                children: [
-                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/jump/?id=${cells.elementAt(index).id}"), child: const Text("Jump")),
-                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/dribble/?id=${cells.elementAt(index).id}"), child: const Text("Dribble")),
-                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/pass/?id=${cells.elementAt(index).id}"), child: const Text("Pass")),
-                  OutlinedButton(onPressed: () => Routemaster.of(context).push("/accuracy/?id=${cells.elementAt(index).id}"), child: const Text("Accuracy")),
-                ],
-              ),
-            );
-          }),
+          onLongPress: () => Routemaster.of(context).push("/game_selecter/?id=${cells.elementAt(index).id}"),
           cells: [DataCell(cells.elementAt(index).getPlayerNumber()), DataCell(cells.elementAt(index).getPhoto()), DataCell(cells.elementAt(index).getLastName()), DataCell(cells.elementAt(index).getJump()), DataCell(cells.elementAt(index).getDribbling()), DataCell(cells.elementAt(index).getAccuracy()), DataCell(cells.elementAt(index).getPass())],),);
       }
-      return 0;
+      return dataRows;
     } catch (e){
-      debugPrint("catch");
-      debugPrint("Error: $e");
-      return 1;
+      debugPrint("[Error on generate()]: $e");
+      return [];
     }
   }
 }

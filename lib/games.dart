@@ -6,6 +6,25 @@ import 'dart:convert';
 import 'connector.dart';
 import 'match_result.dart';
 
+class GameSelecter extends StatelessWidget{
+  final String id;
+  const GameSelecter({super.key, required this.id});
+
+  @override
+  Widget build(BuildContext context){
+    return Card(
+      child: Row(
+        children: [
+          OutlinedButton(onPressed: () => Routemaster.of(context).push("/jump/?id=$id"), child: const Text("Jump")),
+          OutlinedButton(onPressed: () => Routemaster.of(context).push("/dribble/?id=$id"), child: const Text("Dribble")),
+          OutlinedButton(onPressed: () => Routemaster.of(context).push("/pass/?id=$id"), child: const Text("Pass")),
+          OutlinedButton(onPressed: () => Routemaster.of(context).push("/accuracy/?id=$id"), child: const Text("Accuracy")),
+        ],
+      ),
+    );
+  }
+}
+
 class JumpPage extends StatefulWidget{
   final String id;
   const JumpPage({super.key, required this.id});
@@ -84,7 +103,7 @@ class DribblePageState extends State<DribblePage>{
   TextEditingController controllerOne = TextEditingController();
   TextEditingController controllerTwo = TextEditingController();
   int triesInt = 2;
-  String tries = "1/5";
+  String tries = "1/3";
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -118,7 +137,7 @@ class DribblePageState extends State<DribblePage>{
           ),
           OutlinedButton(onPressed:() async {
             try{
-              if(tries != "5/5"){
+              if(tries != "3/3"){
                 var response = await post(Uri.parse("$server:8000/dribbling_result/"),
                   headers: {"Content-type": "application/json"},
                   body: json.encode({
@@ -129,7 +148,7 @@ class DribblePageState extends State<DribblePage>{
                 );
                 debugPrint(response.body);
                 setState(() {
-                  tries = "$triesInt/5";
+                  tries = "$triesInt/3";
                   controllerOne.text = "";
                   controllerTwo.text = "";
                   triesInt++;
@@ -141,7 +160,7 @@ class DribblePageState extends State<DribblePage>{
                   });
               }
             } catch(e){
-              debugPrint("$e");
+              debugPrint("[Error on Done]: $e");
             }
           },
           child: const Text("Done")),
@@ -162,7 +181,7 @@ class AccuracyPage extends StatefulWidget{
 class AccuracyPageState extends State<AccuracyPage>{
   TextEditingController controller = TextEditingController();
   int triesInt = 2;
-  String tries = "1/5";
+  String tries = "1/2";
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -189,7 +208,7 @@ class AccuracyPageState extends State<AccuracyPage>{
             ),
           ),
           OutlinedButton(onPressed:() async {
-            if(tries != "5/5"){
+            if(tries != "2/2"){
               var response = await post(Uri.parse("$server:8000/accuracy_result/"),
                 headers: {"Content-type": "application/json"},
                 body: json.encode({
@@ -199,7 +218,7 @@ class AccuracyPageState extends State<AccuracyPage>{
               );
               debugPrint(response.body);
               setState(() {
-                tries = "$triesInt/5";
+                tries = "$triesInt/2";
                 controller.text = "";
                 triesInt++;
               });
@@ -228,7 +247,7 @@ class PassPage extends StatefulWidget{
 class PassPageState extends State<PassPage>{
   TextEditingController controller = TextEditingController();
   int triesInt = 2;
-  String tries = "1/5";
+  String tries = "1/3";
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -255,7 +274,7 @@ class PassPageState extends State<PassPage>{
             ),
           ),
           OutlinedButton(onPressed:()async {
-            if(tries != "5/5"){
+            if(tries != "3/3"){
               var response = await post(Uri.parse("$server:8000/pass_result/"),
                 headers: {"Content-type": "application/json"},
                 body: json.encode({
@@ -265,7 +284,7 @@ class PassPageState extends State<PassPage>{
               );
               debugPrint(response.body);
               setState(() {
-                tries = "$triesInt/5";
+                tries = "$triesInt/3";
                 controller.text = "";
                 triesInt++;
               });
