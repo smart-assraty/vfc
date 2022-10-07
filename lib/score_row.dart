@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ScoreRow{
   late int playerNumber;
-  late String photo;
+  late String? photo;
   late String lastName;
   late int jump;
   late String dribbling;
@@ -11,7 +11,6 @@ class ScoreRow{
   ScoreRow({required this.playerNumber, required this.photo, required this.lastName, required this.jump, required this.dribbling, required this.accuracy, required this.pass});
 
   factory ScoreRow.fromJson(dynamic body){
-    debugPrint(body.toString());
     return ScoreRow(playerNumber: body["player_number"], photo: body["photo_url"], lastName: body["last_name"], jump: body["jump"], dribbling: body["dribbling"].toString(), accuracy: body["accuracy"].toString(), pass: body["pass"].toString());
   }
 
@@ -47,5 +46,27 @@ class ScoreRow{
 
   Widget getPass(){
     return Text(pass, style: const TextStyle(fontSize: 30, color: Colors.white),);
+  }
+
+  Widget getPermissionButton(bool check){
+    return Container(
+        height: 40,
+        width: 60,
+        decoration: BoxDecoration(
+          border: (check) ? const Border(
+            bottom: BorderSide(color: Colors.black),
+            top: BorderSide(color: Colors.black),
+            right: BorderSide(color: Colors.black),
+            left: BorderSide(color: Colors.black),
+          )
+        : const Border(
+            bottom: BorderSide(color: Colors.grey),
+            top: BorderSide(color: Colors.grey),
+            right: BorderSide(color: Colors.grey),
+            left: BorderSide(color: Colors.grey),
+          )
+        ),
+        child: const Center(child: Text("-")),
+      );
   }
 }

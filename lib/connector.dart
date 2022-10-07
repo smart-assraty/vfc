@@ -8,11 +8,15 @@ class Connector{
   const Connector();
 
   Future<dynamic> getScoreBoardData() async {
-    var response = await get(
-      Uri.parse("$server:8000/match_result/"),
-      headers: {"Content-type": "application/json"}
-      );
-    debugPrint(utf8.decode(response.body.codeUnits));
-    return json.decode(utf8.decode(response.body.codeUnits));
+    try{
+      var response = await get(
+        Uri.parse("$server:8000/match_result/"),
+        headers: {"Content-type": "application/json"}
+        );
+      //debugPrint(utf8.decode(response.body.codeUnits));
+      return json.decode(utf8.decode(response.body.codeUnits));
+    } catch(e){
+      debugPrint("$e");
+    }
   }
 }
