@@ -14,11 +14,12 @@ class GameSelecter extends StatelessWidget{
   Widget build(BuildContext context){
     return Card(
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          OutlinedButton(onPressed: () => Routemaster.of(context).push("/jump/?id=$id"), child: const Text("Jump")),
-          OutlinedButton(onPressed: () => Routemaster.of(context).push("/dribble/?id=$id"), child: const Text("Dribble")),
-          OutlinedButton(onPressed: () => Routemaster.of(context).push("/pass/?id=$id"), child: const Text("Pass")),
-          OutlinedButton(onPressed: () => Routemaster.of(context).push("/accuracy/?id=$id"), child: const Text("Accuracy")),
+          OutlinedButton(onPressed: () => Routemaster.of(context).push("/jump/?id=$id"), child: const SizedBox(height: 50, width: 150, child: Center(child: Text("Jump")))),
+          OutlinedButton(onPressed: () => Routemaster.of(context).push("/dribble/?id=$id"), child: const SizedBox(height: 50, width: 150, child: Center(child: Text("Dribble")))),
+          OutlinedButton(onPressed: () => Routemaster.of(context).push("/pass/?id=$id"), child: const SizedBox(height: 50, width: 150, child: Center(child: Text("Pass")))),
+          OutlinedButton(onPressed: () => Routemaster.of(context).push("/accuracy/?id=$id"), child: const SizedBox(height: 50, width: 150, child: Center(child: Text("Accuracy")))),
         ],
       ),
     );

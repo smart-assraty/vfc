@@ -24,11 +24,12 @@ class ScoreRow{
   }
 
   Widget getPhoto(){
+    debugPrint(photo);
     return Center(
       child: Image(
         height: double.maxFinite,   
         width: 100, 
-        image: NetworkImage("$server/VFC-backend/${photo!}"),
+        image: NetworkImage("$server/vfc-backend/${photo!}"),
       ),
     );
   }
