@@ -15,38 +15,38 @@ class ScoreRow{
     return ScoreRow(id: body.keys.first, photo: body.values.first["photo_url"], lastName: body.values.first["last_name"], jump: body.values.first["jump"], dribbling: body.values.first["dribbling"].toString(), accuracy: body.values.first["accuracy"].toString(), pass: body.values.first["pass"].toString());
   }
 
-  Widget getPlayerNumber(){
-    return Text(id.toString(), style: const TextStyle(fontSize: 40),);
+  Widget getPlayerNumber(Color? color){
+    return Text(id.toString(), style: TextStyle(fontSize: 40, color: color),);
   }
 
-  Widget getLastName(){
-    return Text(lastName, style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold),);
+  Widget getLastName(Color? color){
+    return Text(lastName, style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: color),);
   }
 
   Widget getPhoto(){
-    return
-    Image(
-      height: 50,
-      width: 50,
-      image: NetworkImage("$server/VFC-backend/${photo!}"),
+    return Center(
+      child: Image(
+        height: double.maxFinite,   
+        width: 100, 
+        image: NetworkImage("$server/VFC-backend/${photo!}"),
+      ),
     );
-    //const Icon(Icons.person, size: 60,); //TEST
   }
 
-  Widget getJump(){
-    return Text(jump.toString(), style: const TextStyle(fontSize: 30,),);
+  Widget getJump(Color? color){
+    return Text(jump.toString(), style: TextStyle(fontSize: 30, color: color),);
   }
 
-  Widget getDribbling(){
-    return Text(dribbling, style: const TextStyle(fontSize: 30,),);
+  Widget getDribbling(Color? color){
+    return Text(dribbling, style: TextStyle(fontSize: 30, color: color),);
   }
 
-  Widget getAccuracy(){
-    return Text(accuracy, style: const TextStyle(fontSize: 30,),);
+  Widget getAccuracy(Color? color){
+    return Text(accuracy, style: TextStyle(fontSize: 30, color: color),);
   }
 
-  Widget getPass(){
-    return Text(pass, style: const TextStyle(fontSize: 30,),);
+  Widget getPass(Color? color){
+    return Text(pass, style: TextStyle(fontSize: 30, color: color),);
   }
 
   Widget getPermissionButton(bool check){

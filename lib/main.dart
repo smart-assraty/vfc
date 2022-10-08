@@ -1,5 +1,6 @@
 import 'package:url_strategy/url_strategy.dart' show setPathUrlStrategy;
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:data_table_2/data_table_2.dart';
 import 'package:routemaster/routemaster.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
@@ -19,8 +20,8 @@ void main() {
 }
 
 final routes = RouteMap(routes: {
-  "/": (_) => const MaterialPage(child: TV()),
-  "/score_board": (_) => const MaterialPage(child: ScoreBoard()),
+  "/score_board": (_) => const MaterialPage(child: TV()),
+  "/": (_) => const MaterialPage(child: ScoreBoard()),
   "/game_selecter": (route) => MaterialPage(child: GameSelecter(id: route.queryParameters["id"]!)),
   "/jump": (route) => MaterialPage(child: JumpPage(id: route.queryParameters["id"]!)),
   "/dribble": (route) => MaterialPage(child: DribblePage(id: route.queryParameters["id"]!)),
@@ -37,7 +38,6 @@ class TV extends StatefulWidget{
 }
 
 class TVState extends State<TV>{
-  List<ScoreRow> cells = [];
   String timer = "";
 
   final channel = WebSocketChannel.connect(Uri.parse("ws://185.146.3.41:8000/match_result/"));
@@ -58,15 +58,14 @@ class TVState extends State<TV>{
         ),
         child: Column(
           children: [
-            const Center(child: Image(image: AssetImage("visa.png"), height: 170, width: 300,)),
+            const Image(image: AssetImage("visa.png"), height: 120),
             Center(
               child: Text(
                 timer,
                 style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
               ),
             ),
-            SizedBox(
-              width: double.maxFinite,
+            Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(10),
                 child: retail()
@@ -80,16 +79,16 @@ class TVState extends State<TV>{
 
   TextStyle tableHeaderStyle = const TextStyle(color: Colors.white, fontSize: 20);
   Widget table(List<DataRow> dataRows){
-    return DataTable(
-      dataRowHeight: 70,
+    return DataTable2(
+      dataRowHeight: 100,
       columns: [
-        DataColumn(label: Text("#", style: tableHeaderStyle)),
-        DataColumn(label: Text(" ", style: tableHeaderStyle)),
-        DataColumn(label: Text("Last Name", style: tableHeaderStyle)),
-        DataColumn(label: Text("Jump", style: tableHeaderStyle)),
-        DataColumn(label: Text("Dribbling", style: tableHeaderStyle)),
-        DataColumn(label: Text("Accuracy", style: tableHeaderStyle)),
-        DataColumn(label: Text("Pass", style: tableHeaderStyle)),
+        DataColumn2(fixedWidth: 75, label: Text("#", style: tableHeaderStyle)),
+        DataColumn2(fixedWidth: 120, label: Text(" ", style: tableHeaderStyle)),
+        DataColumn2(size: ColumnSize.L, label: Text("Last Name", style: tableHeaderStyle)),
+        DataColumn2(size: ColumnSize.S, label: Text("Jump", style: tableHeaderStyle)),
+        DataColumn2(size: ColumnSize.S, label: Text("Dribbling", style: tableHeaderStyle)),
+        DataColumn2(size: ColumnSize.S, label: Text("Accuracy", style: tableHeaderStyle)),
+        DataColumn2(size: ColumnSize.S, label: Text("Pass", style: tableHeaderStyle)),
       ], 
       dividerThickness: 10,
       rows: dataRows
@@ -101,7 +100,6 @@ class TVState extends State<TV>{
       stream: channel.stream,
       builder: (context, AsyncSnapshot<dynamic> snapshot){
         if(snapshot.hasData){
-          //debugPrint(snapshot.data);
           return table(generate(json.decode(utf8.decode(snapshot.data.toString().codeUnits))));
         } else {
           return const Center(child: CircularProgressIndicator(),);
@@ -112,6 +110,7 @@ class TVState extends State<TV>{
   List<DataRow> generate(Map<String, dynamic> data){
     try{
       List<DataRow> dataRows = [];
+      List<ScoreRow> cells = [];
       timer = "Match #00${data["id"]} - ${DateTime.now().hour}:${DateTime.now().minute}";
 
       (data["players"] as Map<String, dynamic>).forEach((key, value) {
@@ -121,7 +120,7 @@ class TVState extends State<TV>{
       for(int index = 0; index < cells.length; index++){
         dataRows.add(DataRow(
           onLongPress: () => Routemaster.of(context).push("/game_selecter/?id=${cells.elementAt(index).id}"),
-          cells: [DataCell(cells.elementAt(index).getPlayerNumber()), DataCell(cells.elementAt(index).getPhoto()), DataCell(cells.elementAt(index).getLastName()), DataCell(cells.elementAt(index).getJump()), DataCell(cells.elementAt(index).getDribbling()), DataCell(cells.elementAt(index).getAccuracy()), DataCell(cells.elementAt(index).getPass())],),);
+          cells: [DataCell(cells.elementAt(index).getPlayerNumber(Colors.white)), DataCell(cells.elementAt(index).getPhoto()), DataCell(cells.elementAt(index).getLastName(Colors.white)), DataCell(cells.elementAt(index).getJump(Colors.white)), DataCell(cells.elementAt(index).getDribbling(Colors.white)), DataCell(cells.elementAt(index).getAccuracy(Colors.white)), DataCell(cells.elementAt(index).getPass(Colors.white))],),);
       }
       return dataRows;
     } catch (e){

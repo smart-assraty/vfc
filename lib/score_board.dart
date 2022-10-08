@@ -29,10 +29,26 @@ class ScoreBoardState extends State<ScoreBoard>{
     return Scaffold(
      body: Column(
           children: [
+            Container(
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.all(20),
+              child: OutlinedButton(onPressed: () {
+                showDialog(context: context, builder: (context){
+                  return Card(
+                    child: Center(child: ElevatedButton(onPressed: () {
+                      widget.connector.resetGame();
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("Are you sure about that?"),)),
+                  );
+                });
+              }, 
+              child: const SizedBox(height: 50, width: 100, child: Center(child: Text("Reset Game"))),),
+            ),
             Center(
               child: Text(
                 timer,
-                style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
+                style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black),
               ),
             ),
             SizedBox(
@@ -108,7 +124,6 @@ class ScoreBoardState extends State<ScoreBoard>{
       stream: channel.stream,
       builder: (context, AsyncSnapshot<dynamic> snapshot){
         if(snapshot.hasData){
-          //debugPrint(snapshot.data);
           return table(generate(json.decode(utf8.decode(snapshot.data.toString().codeUnits))));
         } else {
           return const Center(child: CircularProgressIndicator(),);
@@ -127,7 +142,7 @@ class ScoreBoardState extends State<ScoreBoard>{
       for(int index = 0; index < cells.length; index++){
         dataRows.add(DataRow(
           onLongPress: () => Routemaster.of(context).push("/game_selecter/?id=${cells.elementAt(index).id}"), 
-          cells: [DataCell(cells.elementAt(index).getPlayerNumber()), DataCell(cells.elementAt(index).getJump()), DataCell(cells.elementAt(index).getDribbling()), DataCell(cells.elementAt(index).getPass()), DataCell(cells.elementAt(index).getAccuracy()), DataCell(cells.elementAt(index).getPermissionButton(check))],),);
+          cells: [DataCell(cells.elementAt(index).getPlayerNumber(null)), DataCell(cells.elementAt(index).getJump(null)), DataCell(cells.elementAt(index).getDribbling(null)), DataCell(cells.elementAt(index).getPass(null)), DataCell(cells.elementAt(index).getAccuracy(null)), DataCell(cells.elementAt(index).getPermissionButton(check))],),);
       }
       return dataRows;
     } catch (e){
