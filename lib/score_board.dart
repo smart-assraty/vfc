@@ -14,8 +14,6 @@ class ScoreBoard extends StatefulWidget{
   State<ScoreBoard> createState() => ScoreBoardState();
 }
 
-bool check = true;
-
 class ScoreBoardState extends State<ScoreBoard>{
   String timer = "";
   bool error = false;
@@ -108,7 +106,7 @@ class ScoreBoardState extends State<ScoreBoard>{
       columns: const [
         DataColumn(label: Text("ID")),
         DataColumn(label: Text("Last Name")),
-        //DataColumn(label: Text("Jump")),
+        DataColumn(label: Text("Jump")),
         DataColumn(label: Text("Dribble")),
         DataColumn(label: Text("Pass")),
         DataColumn(label: Text("Accuracy")),
@@ -150,11 +148,11 @@ class ScoreBoardState extends State<ScoreBoard>{
           cells: [
             DataCell(cells.elementAt(index).getPlayerNumber(null)), 
             DataCell(cells.elementAt(index).getLastName(null)), 
-            //DataCell(cells.elementAt(index).getJump(null)), 
+            DataCell(cells.elementAt(index).getJump(null)), 
             DataCell(cells.elementAt(index).getDribbling(null)), 
             DataCell(cells.elementAt(index).getPass(null)), 
             DataCell(cells.elementAt(index).getAccuracy(null)), 
-            DataCell(cells.elementAt(index).getPermissionButton(check))],),);
+            DataCell(cells.elementAt(index).getDeleteButton())],),);
       }
       return dataRows;
     } catch (e){

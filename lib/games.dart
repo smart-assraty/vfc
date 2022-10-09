@@ -4,10 +4,10 @@ import 'package:http/http.dart';
 import 'dart:convert';
 
 import 'connector.dart';
-import 'score_board.dart';
 
 class GameSelecter extends StatelessWidget{
   final String id;
+  final connector = const Connector();
   const GameSelecter({super.key, required this.id});
 
   @override
@@ -16,10 +16,23 @@ class GameSelecter extends StatelessWidget{
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          OutlinedButton(onPressed: () => Routemaster.of(context).push("/jump/?id=$id"), child: const SizedBox(height: 50, width: 150, child: Center(child: Text("Jump")))),
-          OutlinedButton(onPressed: () => Routemaster.of(context).push("/dribble/?id=$id"), child: const SizedBox(height: 50, width: 150, child: Center(child: Text("Dribble")))),
-          OutlinedButton(onPressed: () => Routemaster.of(context).push("/pass/?id=$id"), child: const SizedBox(height: 50, width: 150, child: Center(child: Text("Pass")))),
-          OutlinedButton(onPressed: () => Routemaster.of(context).push("/accuracy/?id=$id"), child: const SizedBox(height: 50, width: 150, child: Center(child: Text("Accuracy")))),
+          OutlinedButton(onPressed: () {
+            Routemaster.of(context).push("/jump/?id=$id");
+          },
+          child: const SizedBox(height: 50, width: 150, child: Center(child: Text("Jump")))
+          ),
+          OutlinedButton(onPressed: () {
+            Routemaster.of(context).push("/dribble/?id=$id");
+          },
+           child: const SizedBox(height: 50, width: 150, child: Center(child: Text("Dribble")))),
+          OutlinedButton(onPressed: () {
+            Routemaster.of(context).push("/pass/?id=$id"); 
+          },
+          child: const SizedBox(height: 50, width: 150, child: Center(child: Text("Pass")))),
+          OutlinedButton(onPressed: () {
+            Routemaster.of(context).push("/accuracy/?id=$id"); 
+          }, 
+          child: const SizedBox(height: 50, width: 150, child: Center(child: Text("Accuracy")))),
         ],
       ),
     );
@@ -36,8 +49,7 @@ class JumpPage extends StatefulWidget{
 
 class JumpPageState extends State<JumpPage>{
   TextEditingController controller = TextEditingController();
-  int triesInt = 2;
-  String tries = "1/5";
+  String tries = "";
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -58,32 +70,27 @@ class JumpPageState extends State<JumpPage>{
                   width: 250,
                   child: TextFormField(
                     controller: controller,
+                    keyboardType: TextInputType.number,
                   ),
                 )
               ],
             ),
           ),
           OutlinedButton(onPressed:() async {
-            if(tries != "5/5"){
-              var response = await post(Uri.parse("$server:8000/jump_result/"),
-                headers: {"Content-type": "application/json"},
-                body: json.encode({
-                  "player_id": int.parse(widget.id),
-                  "jump_height": int.parse(controller.text),
-                })
-              );
-              debugPrint(response.body);
-              setState(() {
-                tries = "$triesInt/5";
-                controller.text = "";
-                triesInt++;
-              });
-            } else {
-                setState(() {
-                  Routemaster.of(context).push("/score_board");
-                  check = false;
-                });
-            }
+            var response = await post(Uri.parse("$server:8000/jump_result/"),
+              headers: {"Content-type": "application/json"},
+              body: json.encode({
+                "player_id": int.parse(widget.id),
+                "jump_height": int.parse(controller.text),
+              })
+            );
+            var theJson = json.decode(response.body);
+            setState(() {
+              tries = utf8.decode(theJson["message"].toString().codeUnits);
+              debugPrint(tries.codeUnits.toString());
+              controller.text = "";
+              Routemaster.of(context).push("/score_board");
+            });
           },
           child: const Text("Done")),
         ],
@@ -103,8 +110,7 @@ class DribblePage extends StatefulWidget{
 class DribblePageState extends State<DribblePage>{
   TextEditingController controllerOne = TextEditingController();
   TextEditingController controllerTwo = TextEditingController();
-  int triesInt = 2;
-  String tries = "1/3";
+  String tries = "";
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -126,9 +132,11 @@ class DribblePageState extends State<DribblePage>{
               child: Column(children: [
                 TextFormField(
                   controller: controllerOne,
+                  keyboardType: TextInputType.number,
                 ),
                 TextFormField(
                   controller: controllerTwo,
+                  keyboardType: TextInputType.number,
                 ),
               ],)
 
@@ -138,7 +146,7 @@ class DribblePageState extends State<DribblePage>{
           ),
           OutlinedButton(onPressed:() async {
             try{
-              if(tries != "3/3"){
+            if(tries != "3/3"){
                 var response = await post(Uri.parse("$server:8000/dribbling_result/"),
                   headers: {"Content-type": "application/json"},
                   body: json.encode({
@@ -147,17 +155,15 @@ class DribblePageState extends State<DribblePage>{
                   "cone": int.parse(controllerTwo.text),
                   })
                 );
-                debugPrint(response.body);
+                var theJson = json.decode(response.body);
                 setState(() {
-                  tries = "$triesInt/3";
+                  tries = utf8.decode(theJson["message"].toString().codeUnits);
                   controllerOne.text = "";
                   controllerTwo.text = "";
-                  triesInt++;
                 });
               } else {
                   setState(() {
                     Routemaster.of(context).push("/score_board");
-                    check = false;
                   });
               }
             } catch(e){
@@ -181,8 +187,7 @@ class AccuracyPage extends StatefulWidget{
 
 class AccuracyPageState extends State<AccuracyPage>{
   TextEditingController controller = TextEditingController();
-  int triesInt = 2;
-  String tries = "1/2";
+  String tries = "";
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -203,30 +208,29 @@ class AccuracyPageState extends State<AccuracyPage>{
                   width: 250,
                 child: TextFormField(
                   controller: controller,
+                  keyboardType: TextInputType.number,
                 ),
                 ),
               ],
             ),
           ),
           OutlinedButton(onPressed:() async {
+            var response = await post(Uri.parse("$server:8000/accuracy_result/"),
+              headers: {"Content-type": "application/json"},
+              body: json.encode({
+              "player_id": int.parse(widget.id),
+              "hits": int.parse(controller.text),
+            })
+            );
+            var theJson = json.decode(response.body);
             if(tries != "2/2"){
-              var response = await post(Uri.parse("$server:8000/accuracy_result/"),
-                headers: {"Content-type": "application/json"},
-                body: json.encode({
-                "player_id": int.parse(widget.id),
-                "hits": int.parse(controller.text),
-              })
-              );
-              debugPrint(response.body);
               setState(() {
-                tries = "$triesInt/2";
+                tries = utf8.decode(theJson["message"].toString().codeUnits);
                 controller.text = "";
-                triesInt++;
               });
             } else {
                 setState(() {
                   Routemaster.of(context).push("/score_board");
-                  check = false;
                 });
             }
           },
@@ -247,8 +251,7 @@ class PassPage extends StatefulWidget{
 
 class PassPageState extends State<PassPage>{
   TextEditingController controller = TextEditingController();
-  int triesInt = 2;
-  String tries = "1/3";
+  String tries = "";
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -269,30 +272,29 @@ class PassPageState extends State<PassPage>{
                   width: 250,
                 child: TextFormField(
                   controller: controller,
+                  keyboardType: TextInputType.number,
                 ),
                 ),
               ],
             ),
           ),
-          OutlinedButton(onPressed:()async {
+          OutlinedButton(onPressed:() async {
+            var response = await post(Uri.parse("$server:8000/pass_result/"),
+              headers: {"Content-type": "application/json"},
+              body: json.encode({
+              "player_id": int.parse(widget.id),
+              "hits": int.parse(controller.text),
+            })
+            );
+            var theJson = json.decode(response.body);
             if(tries != "3/3"){
-              var response = await post(Uri.parse("$server:8000/pass_result/"),
-                headers: {"Content-type": "application/json"},
-                body: json.encode({
-                "player_id": int.parse(widget.id),
-                "hits": int.parse(controller.text),
-              })
-              );
-              debugPrint(response.body);
               setState(() {
-                tries = "$triesInt/3";
+                tries = utf8.decode(theJson["message"].toString().codeUnits);
                 controller.text = "";
-                triesInt++;
               });
             } else {
                 setState(() {
                   Routemaster.of(context).push("/score_board");
-                  check = false;
                 });
             }
           },

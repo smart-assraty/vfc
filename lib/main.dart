@@ -22,7 +22,7 @@ final routes = RouteMap(routes: {
   "/": (_) => const MaterialPage(child: TV()),
   "/score_board": (_) => const MaterialPage(child: ScoreBoard()),
   "/game_selecter": (route) => MaterialPage(child: GameSelecter(id: route.queryParameters["id"]!)),
-  "/jump": (route) => MaterialPage(child: JumpPage(id: route.queryParameters["id"]!)),
+  "/jump": (route) => MaterialPage(child: JumpPage(id: route.queryParameters["id"]!,)),
   "/dribble": (route) => MaterialPage(child: DribblePage(id: route.queryParameters["id"]!)),
   "/pass": (route) => MaterialPage(child: PassPage(id: route.queryParameters["id"]!)),
   "/accuracy": (route) => MaterialPage(child: AccuracyPage(id: route.queryParameters["id"]!)),
@@ -80,9 +80,9 @@ class TVState extends State<TV>{
       dataRowHeight: 100,
       columns: [
         DataColumn2(fixedWidth: 100, label: Text("#", style: tableHeaderStyle)),
-        DataColumn2(fixedWidth: 120, label: Text(" ", style: tableHeaderStyle)),
+        //DataColumn2(fixedWidth: 120, label: Text(" ", style: tableHeaderStyle)),
         DataColumn2(size: ColumnSize.L, label: Text("Last Name", style: tableHeaderStyle)),
-        //DataColumn2(size: ColumnSize.S, label: Text("Jump", style: tableHeaderStyle)),
+        DataColumn2(size: ColumnSize.S, label: Text("Jump", style: tableHeaderStyle)),
         DataColumn2(size: ColumnSize.S, label: Text("Dribbling", style: tableHeaderStyle)),
         DataColumn2(size: ColumnSize.S, label: Text("Accuracy", style: tableHeaderStyle)),
         DataColumn2(size: ColumnSize.S, label: Text("Pass", style: tableHeaderStyle)),
@@ -125,9 +125,9 @@ class TVState extends State<TV>{
           onLongPress: () => Routemaster.of(context).push("/game_selecter/?id=${cells.elementAt(index).id}"),
           cells: [
             DataCell(cells.elementAt(index).getPlayerNumber(Colors.white)), 
-            DataCell(cells.elementAt(index).getPhoto()), 
+            //DataCell(cells.elementAt(index).getPhoto()), 
             DataCell(cells.elementAt(index).getLastName(Colors.white)), 
-            //DataCell(cells.elementAt(index).getJump(Colors.white)), 
+            DataCell(cells.elementAt(index).getJump(Colors.white)), 
             DataCell(cells.elementAt(index).getDribbling(Colors.white)), 
             DataCell(cells.elementAt(index).getAccuracy(Colors.white)), 
             DataCell(cells.elementAt(index).getPass(Colors.white))],),);

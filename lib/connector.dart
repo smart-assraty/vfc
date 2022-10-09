@@ -13,7 +13,7 @@ class Connector{
         Uri.parse("$server:8000/match_result/"),
         headers: {"Content-type": "application/json"}
         );
-      debugPrint(utf8.decode(response.body.codeUnits));
+      //debugPrint(utf8.decode(response.body.codeUnits));
       return json.decode(utf8.decode(response.body.codeUnits));
     } catch(e){
       debugPrint("[Error on getScoreBoard]: $e");
@@ -30,9 +30,18 @@ class Connector{
     }
   }
 
+  Future<void> deletePlayer(String id) async{
+    try{
+      var response = await post(Uri.parse("$server:8000/delete_player/?id=$id"));
+      debugPrint("[Delete Player Response]:${response.body}");
+    } catch(e){
+      debugPrint("[Error on deletePlayer]: $e");
+    }
+  }
+
   Future<dynamic> resetGame() async {
     try{
-      var response = await get(Uri.parse("$server:8000/start_new_match"));
+      var response = await get(Uri.parse("$server:8000/start_new_match/"));
       return response.body;
     } catch (e){
       debugPrint("$e");
