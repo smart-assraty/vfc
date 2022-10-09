@@ -50,6 +50,7 @@ class JumpPage extends StatefulWidget{
 class JumpPageState extends State<JumpPage>{
   TextEditingController controller = TextEditingController();
   String tries = "";
+  bool clicked = false;
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -62,37 +63,45 @@ class JumpPageState extends State<JumpPage>{
         children: [
           const Text("Jump"),
           Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("Try $tries"),
+            child: Center(
+              child: 
                 SizedBox(
                   width: 250,
                   child: TextFormField(
                     controller: controller,
                     keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                    hintText: "Jump score",
+                  ),
                   ),
                 )
-              ],
+              
             ),
           ),
           OutlinedButton(onPressed:() async {
-            var response = await post(Uri.parse("$server:8000/jump_result/"),
-              headers: {"Content-type": "application/json"},
-              body: json.encode({
-                "player_id": int.parse(widget.id),
-                "jump_height": int.parse(controller.text),
-              })
-            );
-            var theJson = json.decode(response.body);
-            setState(() {
-              tries = utf8.decode(theJson["message"].toString().codeUnits);
-              debugPrint(tries.codeUnits.toString());
-              controller.text = "";
-              Routemaster.of(context).push("/score_board");
-            });
+            if(!clicked){
+              setState(() {
+                clicked = true;
+              });
+              var response = await post(Uri.parse("$server:8000/jump_result/"),
+                headers: {"Content-type": "application/json"},
+                body: json.encode({
+                  "player_id": int.parse(widget.id),
+                  "jump_height": int.parse(controller.text),
+                })
+              );
+              var theJson = json.decode(response.body);
+              setState(() {
+                tries = utf8.decode(theJson["message"].toString().codeUnits);
+                debugPrint(tries.codeUnits.toString());
+                controller.text = "";
+                Routemaster.of(context).push("/score_board");
+              });
+            } else {
+              null;
+            }
           },
-          child: const Text("Done")),
+          child: (clicked) ? const CircularProgressIndicator() : const Text("Done")),
         ],
       ),
     );
@@ -111,6 +120,7 @@ class DribblePageState extends State<DribblePage>{
   TextEditingController controllerOne = TextEditingController();
   TextEditingController controllerTwo = TextEditingController();
   String tries = "";
+  bool clicked = false;
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -121,56 +131,65 @@ class DribblePageState extends State<DribblePage>{
           const Image(image: AssetImage("visa.png"), height: 170, width: 300,)],),
       body: Column(
         children: [
-          const Text("Dribbling"),
+          const Text("Dribble"),
           Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Try $tries"),
-              SizedBox(
+          child: SizedBox(
                 width: 250,
               child: Column(children: [
                 TextFormField(
                   controller: controllerOne,
                   keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    hintText: "Hits",
+                  ),
                 ),
                 TextFormField(
                   controller: controllerTwo,
                   keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    hintText: "Cones",
+                  ),
                 ),
               ],)
-
               ),
-            ],
-          ),
+            
           ),
           OutlinedButton(onPressed:() async {
-            try{
-            if(tries != "3/3"){
-                var response = await post(Uri.parse("$server:8000/dribbling_result/"),
-                  headers: {"Content-type": "application/json"},
-                  body: json.encode({
-                  "player_id": int.parse(widget.id),
-                  "time": int.parse(controllerOne.text),
-                  "cone": int.parse(controllerTwo.text),
-                  })
-                );
-                var theJson = json.decode(response.body);
-                setState(() {
-                  tries = utf8.decode(theJson["message"].toString().codeUnits);
-                  controllerOne.text = "";
-                  controllerTwo.text = "";
-                });
-              } else {
+            if(!clicked){
+              setState(() {
+                clicked = true;
+              });
+              try{
+              if(tries != "3/3"  || tries != "Исчерпано количество попыток!"){
+                  var response = await post(Uri.parse("$server:8000/dribbling_result/"),
+                    headers: {"Content-type": "application/json"},
+                    body: json.encode({
+                    "player_id": int.parse(widget.id),
+                    "time": int.parse(controllerOne.text),
+                    "cone": int.parse(controllerTwo.text),
+                    })
+                  );
+                  var theJson = json.decode(response.body);
                   setState(() {
-                    Routemaster.of(context).push("/score_board");
+                    tries = utf8.decode(theJson["message"].toString().codeUnits);
+                    controllerOne.text = "";
+                    controllerTwo.text = "";
+                    clicked = false;
                   });
+                } else {
+                    setState(() {
+                      clicked = true;
+                      Routemaster.of(context).push("/score_board");
+                    });
+                }
+              } catch(e){
+                debugPrint("[Error on Done]: $e");
               }
-            } catch(e){
-              debugPrint("[Error on Done]: $e");
+            } else {
+              null;
             }
           },
-          child: const Text("Done")),
+          child: (clicked) ? const CircularProgressIndicator() : const Text("Done")),
         ],
       ),
     );
@@ -188,6 +207,7 @@ class AccuracyPage extends StatefulWidget{
 class AccuracyPageState extends State<AccuracyPage>{
   TextEditingController controller = TextEditingController();
   String tries = "";
+  bool clicked = false;
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -200,41 +220,50 @@ class AccuracyPageState extends State<AccuracyPage>{
         children: [
           const Text("Accuracy"),
           Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("Try $tries"),
-                SizedBox(
-                  width: 250,
+            child: Center(
+              child: SizedBox(
+                width: 250,
                 child: TextFormField(
                   controller: controller,
                   keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    hintText: "Accuracy score",
+                  ),
                 ),
                 ),
-              ],
             ),
           ),
           OutlinedButton(onPressed:() async {
-            var response = await post(Uri.parse("$server:8000/accuracy_result/"),
-              headers: {"Content-type": "application/json"},
-              body: json.encode({
-              "player_id": int.parse(widget.id),
-              "hits": int.parse(controller.text),
-            })
-            );
-            var theJson = json.decode(response.body);
-            if(tries != "2/2"){
+            if(!clicked){
               setState(() {
-                tries = utf8.decode(theJson["message"].toString().codeUnits);
-                controller.text = "";
+                clicked = true;
               });
-            } else {
+              var response = await post(Uri.parse("$server:8000/accuracy_result/"),
+                headers: {"Content-type": "application/json"},
+                body: json.encode({
+                "player_id": int.parse(widget.id),
+                "hits": int.parse(controller.text),
+              })
+              );
+              var theJson = json.decode(response.body);
+              if(tries != "2/2" || tries != "Исчерпано количество попыток!"){
                 setState(() {
-                  Routemaster.of(context).push("/score_board");
+                  tries = utf8.decode(theJson["message"].toString().codeUnits);
+                  controller.text = "";
+                  clicked = false;
                 });
+              } else {
+                  setState(() {
+                    clicked = true;
+                    Routemaster.of(context).push("/score_board");
+                    clicked = false;
+                  });
+              } 
+            } else {
+              null;
             }
           },
-          child: const Text("Done")),
+          child: (clicked) ? const CircularProgressIndicator() : const Text("Done")),
         ],
       ),
     );
@@ -252,6 +281,7 @@ class PassPage extends StatefulWidget{
 class PassPageState extends State<PassPage>{
   TextEditingController controller = TextEditingController();
   String tries = "";
+  bool clicked = false;
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -264,41 +294,44 @@ class PassPageState extends State<PassPage>{
         children: [
           const Text("Pass"),
           Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("Try $tries"),
-                SizedBox(
+            child: SizedBox(
                   width: 250,
                 child: TextFormField(
                   controller: controller,
                   keyboardType: TextInputType.number,
                 ),
                 ),
-              ],
-            ),
           ),
           OutlinedButton(onPressed:() async {
-            var response = await post(Uri.parse("$server:8000/pass_result/"),
-              headers: {"Content-type": "application/json"},
-              body: json.encode({
-              "player_id": int.parse(widget.id),
-              "hits": int.parse(controller.text),
-            })
-            );
-            var theJson = json.decode(response.body);
-            if(tries != "3/3"){
+            if(!clicked){
               setState(() {
-                tries = utf8.decode(theJson["message"].toString().codeUnits);
-                controller.text = "";
+                clicked = true;
               });
-            } else {
+              var response = await post(Uri.parse("$server:8000/pass_result/"),
+                headers: {"Content-type": "application/json"},
+                body: json.encode({
+                "player_id": int.parse(widget.id),
+                "hits": int.parse(controller.text),
+              })
+              );
+              var theJson = json.decode(response.body);
+              if(tries != "3/3"  || tries != "Исчерпано количество попыток!"){
                 setState(() {
-                  Routemaster.of(context).push("/score_board");
+                  tries = utf8.decode(theJson["message"].toString().codeUnits);
+                  controller.text = "";
+                  clicked = false;
                 });
+              } else {
+                  setState(() {
+                    clicked = true;
+                    Routemaster.of(context).push("/score_board");
+                  });
+              }
+            } else {
+              null;
             }
           },
-          child: const Text("Done")),
+          child: (clicked) ? const CircularProgressIndicator() : const Text("Done")),
         ],
       ),
     );
