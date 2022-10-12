@@ -9,6 +9,8 @@ import 'score_row.dart';
 import 'score_board.dart';
 import 'games.dart';
 
+String server = "http://185.146.3.41";
+
 void main() {
   setPathUrlStrategy();
   runApp(MaterialApp.router(
@@ -20,8 +22,7 @@ void main() {
 
 final routes = RouteMap(routes: {
   "/": (_) => const MaterialPage(child: TV()),
-  "/score_board": (_) => const MaterialPage(child: ScoreBoard()),
-  "/game_selecter": (route) => MaterialPage(child: GameSelecter(id: route.queryParameters["id"]!)),
+  "/score_board/:game": (route) => MaterialPage(child: ScoreBoard(game: route.pathParameters["game"]!)),
   "/jump": (route) => MaterialPage(child: JumpPage(id: route.queryParameters["id"]!,)),
   "/dribble": (route) => MaterialPage(child: DribblePage(id: route.queryParameters["id"]!)),
   "/pass": (route) => MaterialPage(child: PassPage(id: route.queryParameters["id"]!)),

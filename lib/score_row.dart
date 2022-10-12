@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'connector.dart';
 
+import 'main.dart';
+
 class ScoreRow{
   String id;
   String? photo;

@@ -3,41 +3,7 @@ import 'package:routemaster/routemaster.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 
-import 'connector.dart';
-
-class GameSelecter extends StatelessWidget{
-  final String id;
-  final connector = const Connector();
-  const GameSelecter({super.key, required this.id});
-
-  @override
-  Widget build(BuildContext context){
-    return Card(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          OutlinedButton(onPressed: () {
-            Routemaster.of(context).push("/jump/?id=$id");
-          },
-          child: const SizedBox(height: 50, width: 150, child: Center(child: Text("Jump")))
-          ),
-          OutlinedButton(onPressed: () {
-            Routemaster.of(context).push("/dribble/?id=$id");
-          },
-           child: const SizedBox(height: 50, width: 150, child: Center(child: Text("Dribble")))),
-          OutlinedButton(onPressed: () {
-            Routemaster.of(context).push("/pass/?id=$id"); 
-          },
-          child: const SizedBox(height: 50, width: 150, child: Center(child: Text("Pass")))),
-          OutlinedButton(onPressed: () {
-            Routemaster.of(context).push("/accuracy/?id=$id"); 
-          }, 
-          child: const SizedBox(height: 50, width: 150, child: Center(child: Text("Accuracy")))),
-        ],
-      ),
-    );
-  }
-}
+import 'main.dart';
 
 class JumpPage extends StatefulWidget{
   final String id;
@@ -49,7 +15,7 @@ class JumpPage extends StatefulWidget{
 
 class JumpPageState extends State<JumpPage>{
   TextEditingController controller = TextEditingController();
-  String tries = "";
+  String tries = "1/1";
   bool clicked = false;
   @override
   Widget build(BuildContext context){
@@ -119,7 +85,7 @@ class DribblePage extends StatefulWidget{
 class DribblePageState extends State<DribblePage>{
   TextEditingController controllerOne = TextEditingController();
   TextEditingController controllerTwo = TextEditingController();
-  String tries = "";
+  String tries = "1/3";
   bool clicked = false;
   @override
   Widget build(BuildContext context){
@@ -206,7 +172,7 @@ class AccuracyPage extends StatefulWidget{
 
 class AccuracyPageState extends State<AccuracyPage>{
   TextEditingController controller = TextEditingController();
-  String tries = "";
+  String tries = "1/2";
   bool clicked = false;
   @override
   Widget build(BuildContext context){
@@ -280,7 +246,7 @@ class PassPage extends StatefulWidget{
 
 class PassPageState extends State<PassPage>{
   TextEditingController controller = TextEditingController();
-  String tries = "";
+  String tries = "1/3";
   bool clicked = false;
   @override
   Widget build(BuildContext context){

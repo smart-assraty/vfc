@@ -6,9 +6,10 @@ import 'connector.dart';
 import 'score_row.dart';
 
 class ScoreBoard extends StatefulWidget{
+  final String game;
   final Connector connector = const Connector();
 
-  const ScoreBoard({super.key});
+  const ScoreBoard({super.key, required this.game});
 
   @override
   State<ScoreBoard> createState() => ScoreBoardState();
@@ -62,7 +63,6 @@ class ScoreBoardState extends State<ScoreBoard>{
                       TextFormField(
                         controller: controller,
                         decoration: const InputDecoration(
-                          border: InputBorder.none,
                           hintText: "ID of player",
                           hintStyle: TextStyle(fontSize: 24),
                         ),
@@ -144,7 +144,7 @@ class ScoreBoardState extends State<ScoreBoard>{
       }
       for(int index = 0; index < cells.length; index++){
         dataRows.add(DataRow(
-          onLongPress: () => Routemaster.of(context).push("/game_selecter/?id=${cells.elementAt(index).id}"), 
+          onLongPress: () => Routemaster.of(context).push("/${widget.game}/?id=${cells.elementAt(index).id}"), 
           cells: [
             DataCell(cells.elementAt(index).getPlayerNumber(null)), 
             DataCell(cells.elementAt(index).getLastName(null)), 

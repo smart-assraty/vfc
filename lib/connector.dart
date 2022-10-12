@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 
-String server = "http://10.34.25.26";
+import 'main.dart';
 
 class Connector{
   const Connector();
