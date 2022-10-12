@@ -23,10 +23,10 @@ void main() {
 final routes = RouteMap(routes: {
   "/": (_) => const MaterialPage(child: TV()),
   "/score_board/:game": (route) => MaterialPage(child: ScoreBoard(game: route.pathParameters["game"]!)),
-  "/jump": (route) => MaterialPage(child: JumpPage(id: route.queryParameters["id"]!,)),
-  "/dribble": (route) => MaterialPage(child: DribblePage(id: route.queryParameters["id"]!)),
-  "/pass": (route) => MaterialPage(child: PassPage(id: route.queryParameters["id"]!)),
-  "/accuracy": (route) => MaterialPage(child: AccuracyPage(id: route.queryParameters["id"]!)),
+  "/jump": (route) => MaterialPage(child: JumpPage(id: route.queryParameters["id"]!, maxTries: 1,)),
+  "/dribble": (route) => MaterialPage(child: DribblePage(id: route.queryParameters["id"]!, maxTries: 3,)),
+  "/pass": (route) => MaterialPage(child: PassPage(id: route.queryParameters["id"]!, maxTries: 3,)),
+  "/accuracy": (route) => MaterialPage(child: AccuracyPage(id: route.queryParameters["id"]!, maxTries: 2,)),
 });
 
 class TV extends StatefulWidget{
