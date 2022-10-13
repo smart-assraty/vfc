@@ -8,7 +8,8 @@ import 'main.dart';
 class JumpPage extends StatefulWidget{
   final String id;
   final int maxTries;
-  const JumpPage({super.key, required this.id, required this.maxTries});
+  int currentTry = 1;
+  JumpPage({super.key, required this.id, required this.maxTries});
 
   @override
   State<JumpPage> createState() => JumpPageState();
@@ -17,10 +18,9 @@ class JumpPage extends StatefulWidget{
 class JumpPageState extends State<JumpPage>{
   TextEditingController controller = TextEditingController();
   bool clicked = false;
-  int currentTry = 1;
   @override
   Widget build(BuildContext context){
-    String tries = "$currentTry/${widget.maxTries}";
+    String tries = "${widget.currentTry}/${widget.maxTries}";
     return Scaffold(
       appBar: AppBar(
         title: const Text("operator 1"),
@@ -76,7 +76,8 @@ class JumpPageState extends State<JumpPage>{
 class DribblePage extends StatefulWidget{
   final String id;
   final int maxTries;
-  const DribblePage({super.key, required this.id, required this.maxTries});
+  int currentTry = 1;
+  DribblePage({super.key, required this.id, required this.maxTries});
 
   @override
   State<DribblePage> createState() => DribblePageState();
@@ -85,11 +86,10 @@ class DribblePage extends StatefulWidget{
 class DribblePageState extends State<DribblePage>{
   TextEditingController controllerOne = TextEditingController();
   TextEditingController controllerTwo = TextEditingController();
-  int currentTry = 1;
   bool clicked = false;
   @override
   Widget build(BuildContext context){
-    String tries = "$currentTry/${widget.maxTries}";
+    String tries = "${widget.currentTry}/${widget.maxTries}";
     return Scaffold(
       appBar: AppBar(
         title: const Text("operator 1"),
@@ -141,7 +141,7 @@ class DribblePageState extends State<DribblePage>{
                     tries = utf8.decode(theJson["message"].toString().codeUnits);
                     controllerOne.text = "";
                     controllerTwo.text = "";
-                    currentTry++;
+                    widget.currentTry++;
                     clicked = false;
                   });
                 } else {
@@ -167,7 +167,8 @@ class DribblePageState extends State<DribblePage>{
 class AccuracyPage extends StatefulWidget{
   final String id;
   final int maxTries;
-  const AccuracyPage({super.key, required this.id, required this.maxTries});
+  int currentTry = 1;
+  AccuracyPage({super.key, required this.id, required this.maxTries});
 
   @override
   State<AccuracyPage> createState() => AccuracyPageState();
@@ -175,11 +176,10 @@ class AccuracyPage extends StatefulWidget{
 
 class AccuracyPageState extends State<AccuracyPage>{
   TextEditingController controller = TextEditingController();
-  int currentTry = 1;
   bool clicked = false;
   @override
   Widget build(BuildContext context){
-    String tries = "$currentTry/${widget.maxTries}";
+    String tries = "${widget.currentTry}/${widget.maxTries}";
     return Scaffold(
       appBar: AppBar(
         title: const Text("operator 1"),
@@ -220,7 +220,7 @@ class AccuracyPageState extends State<AccuracyPage>{
                 setState(() {
                   tries = utf8.decode(theJson["message"].toString().codeUnits);
                   controller.text = "";
-                  currentTry++;
+                  widget.currentTry++;
                   clicked = false;
                 });
               } else {
@@ -244,7 +244,8 @@ class AccuracyPageState extends State<AccuracyPage>{
 class PassPage extends StatefulWidget{
   final String id;
   final int maxTries;
-  const PassPage({super.key, required this.id, required this.maxTries});
+  int currentTry = 1;
+  PassPage({super.key, required this.id, required this.maxTries});
 
   @override
   State<PassPage> createState() => PassPageState();
@@ -252,11 +253,10 @@ class PassPage extends StatefulWidget{
 
 class PassPageState extends State<PassPage>{
   TextEditingController controller = TextEditingController();
-  int currentTry = 1;
   bool clicked = false;
   @override
   Widget build(BuildContext context){
-    String tries = "$currentTry/${widget.maxTries}";
+    String tries = "${widget.currentTry}/${widget.maxTries}";
     return Scaffold(
       appBar: AppBar(
         title: const Text("operator 1"),
@@ -295,7 +295,7 @@ class PassPageState extends State<PassPage>{
                 setState(() {
                   tries = utf8.decode(theJson["message"].toString().codeUnits);
                   controller.text = "";
-                  currentTry++;
+                  widget.currentTry++;
                   clicked = false;
                 });
               } else {

@@ -19,8 +19,8 @@ class TableGenerator{
         builder: (context, AsyncSnapshot<dynamic> snapshot){
           if(snapshot.hasData){
             return (screen) ?
-            table(snapshot.data, tableHeaderStyle, screen) : 
-            table(snapshot.data, null, screen);
+            tableTV(snapshot.data, tableHeaderStyle) : 
+            tableOperator(snapshot.data, null);
           } else {
             return const Center(child: CircularProgressIndicator(),);
           }
@@ -28,22 +28,24 @@ class TableGenerator{
     });
   }
 
-  Widget table(List<DataRow> dataRows, TextStyle? tableHeaderStyle, bool hasButton){
-    return (hasButton) ? 
-    DataTable2(
+  Widget tableTV(List<DataRow> dataRows, TextStyle? tableHeaderStyle){
+    return DataTable2(
       dataRowHeight: 90,
       columns: [
         DataColumn2(fixedWidth: 100, label: Text("#", style: tableHeaderStyle)),
         DataColumn2(size: ColumnSize.L, label: Text("Last Name", style: tableHeaderStyle)),
-        DataColumn2(size: ColumnSize.S, label: Text("Jump", style: tableHeaderStyle)),
-        DataColumn2(size: ColumnSize.S, label: Text("Dribbling", style: tableHeaderStyle)),
-        DataColumn2(size: ColumnSize.S, label: Text("Pass", style: tableHeaderStyle)),
-        DataColumn2(size: ColumnSize.S, label: Text("Accuracy", style: tableHeaderStyle)),
+        DataColumn2(size: ColumnSize.L, label: Text("Jump", style: tableHeaderStyle)),
+        DataColumn2(size: ColumnSize.L, label: Text("Dribbling", style: tableHeaderStyle)),
+        DataColumn2(size: ColumnSize.L, label: Text("Pass", style: tableHeaderStyle)),
+        DataColumn2(size: ColumnSize.L, label: Text("Accuracy", style: tableHeaderStyle)),
       ], 
       dividerThickness: 10,
       rows: dataRows
-    ) : 
-    DataTable(
+    );
+  }
+
+  Widget tableOperator(List<DataRow> dataRows, TextStyle? tableHeaderStyle){
+    return DataTable(
       dataRowHeight: 90,
       columns: [
         DataColumn2(fixedWidth: 100, label: Text("#", style: tableHeaderStyle)),
@@ -73,29 +75,35 @@ class TableGenerator{
       }
       if(screen){
         for(int index = 0; index < cells.length; index++){
-          dataRows.add(DataRow(
-            onLongPress: () => Routemaster.of(context).push("/$game/?id=${cells.elementAt(index).id}"), 
-            cells: [
-              DataCell(cells.elementAt(index).getPlayerNumber(null)), 
-              DataCell(cells.elementAt(index).getLastName(null)), 
-              DataCell(cells.elementAt(index).getJump(null)), 
-              DataCell(cells.elementAt(index).getDribbling(null)), 
-              DataCell(cells.elementAt(index).getPass(null)), 
-              DataCell(cells.elementAt(index).getAccuracy(null)), 
-            ],),);
+          dataRows.add(
+            DataRow(
+              cells: [
+                DataCell(cells.elementAt(index).getPlayerNumber(null)), 
+                DataCell(cells.elementAt(index).getLastName(null)), 
+                DataCell(cells.elementAt(index).getJump(null)), 
+                DataCell(cells.elementAt(index).getDribbling(null)), 
+                DataCell(cells.elementAt(index).getPass(null)), 
+                DataCell(cells.elementAt(index).getAccuracy(null)), 
+              ],
+            ),
+          );
         }
       } else {
         for(int index = 0; index < cells.length; index++){
-          dataRows.add(DataRow(
-            onLongPress: () => Routemaster.of(context).push("/$game/?id=${cells.elementAt(index).id}"), 
-            cells: [
-              DataCell(cells.elementAt(index).getPlayerNumber(null)), 
-              DataCell(cells.elementAt(index).getLastName(null)), 
-              DataCell(cells.elementAt(index).getJump(null)), 
-              DataCell(cells.elementAt(index).getDribbling(null)), 
-              DataCell(cells.elementAt(index).getPass(null)), 
-              DataCell(cells.elementAt(index).getAccuracy(null)), 
-              DataCell(cells.elementAt(index).getDeleteButton())],),);
+          dataRows.add(
+            DataRow(
+              onLongPress: () => Routemaster.of(context).push("/$game/?id=${cells.elementAt(index).id}"), 
+              cells: [
+                DataCell(cells.elementAt(index).getPlayerNumber(null)), 
+                DataCell(cells.elementAt(index).getLastName(null)), 
+                DataCell(cells.elementAt(index).getJumpProgress(null)), 
+                DataCell(cells.elementAt(index).getDribblingProgress(null)), 
+                DataCell(cells.elementAt(index).getPassProgress(null)), 
+                DataCell(cells.elementAt(index).getAccuracyProgress(null)), 
+                DataCell(cells.elementAt(index).getDeleteButton())
+              ],
+            ),
+          );
         }
       }
       return dataRows;
