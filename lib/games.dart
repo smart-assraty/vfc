@@ -20,7 +20,7 @@ class JumpPageState extends State<JumpPage>{
   int currentTry = 1;
   @override
   Widget build(BuildContext context){
-    String tries = "$currentTry/${widget.maxTries})";
+    String tries = "$currentTry/${widget.maxTries}";
     return Scaffold(
       appBar: AppBar(
         title: const Text("operator 1"),
@@ -29,16 +29,15 @@ class JumpPageState extends State<JumpPage>{
           const Image(image: AssetImage("visa.png"), height: 170, width: 300,)],),
       body: Column(
         children: [
-          const Text("Jump"),
+          Text("Jump $tries"),
           Center(
             child: SizedBox(
               width: 250,
               child: TextFormField(
                 controller: controller,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: tries,
-                  hintText: "Jump score",
+                decoration: const InputDecoration(
+                  labelText: "Jump score",
                 ),
               ),
             )  
@@ -99,7 +98,7 @@ class DribblePageState extends State<DribblePage>{
           const Image(image: AssetImage("visa.png"), height: 170, width: 300,)],),
       body: Column(
         children: [
-          const Text("Dribble"),
+          Text("Dribble $tries"),
           Center(
           child: SizedBox(
                 width: 250,
@@ -108,15 +107,14 @@ class DribblePageState extends State<DribblePage>{
                   controller: controllerOne,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
-                    hintText: "Hits",
+                    labelText: "Hits",
                   ),
                 ),
                 TextFormField(
                   controller: controllerTwo,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: tries,
-                    hintText: "Cones",
+                  decoration: const InputDecoration(
+                    labelText: "Cones",
                   ),
                 ),
               ],)
@@ -190,7 +188,7 @@ class AccuracyPageState extends State<AccuracyPage>{
           const Image(image: AssetImage("visa.png"), height: 170, width: 300,)],),
       body: Column(
         children: [
-          const Text("Accuracy"),
+          Text("Accuracy $tries"),
           Center(
             child: Center(
               child: SizedBox(
@@ -198,9 +196,8 @@ class AccuracyPageState extends State<AccuracyPage>{
                 child: TextFormField(
                   controller: controller,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: tries,
-                    hintText: "Accuracy score",
+                  decoration: const InputDecoration(
+                    labelText: "Accuracy score",
                   ),
                 ),
                 ),
@@ -268,16 +265,15 @@ class PassPageState extends State<PassPage>{
           const Image(image: AssetImage("visa.png"), height: 170, width: 300,)],),
       body: Column(
         children: [
-          const Text("Pass"),
+          Text("Pass $tries"),
           Center(
             child: SizedBox(
                   width: 250,
                 child: TextFormField(
                   controller: controller,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: tries,
-                    hintText: "Pass score",
+                  decoration: const InputDecoration(
+                    labelText: "Pass score",
                   ),
                 ),
                 ),

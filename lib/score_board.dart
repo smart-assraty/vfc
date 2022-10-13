@@ -1,21 +1,67 @@
-import 'package:timer_builder/timer_builder.dart';
-import 'package:routemaster/routemaster.dart';
 import 'package:flutter/material.dart';
 
 import 'connector.dart';
-import 'score_row.dart';
+import 'table_generator.dart';
 
-class ScoreBoard extends StatefulWidget{
-  final String game;
-  final Connector connector = const Connector();
-
-  const ScoreBoard({super.key, required this.game});
+class TV extends StatefulWidget{
+  final TableGenerator tableGenerator = const TableGenerator();
+  const TV({super.key});
 
   @override
-  State<ScoreBoard> createState() => ScoreBoardState();
+  State<TV> createState() => TVState();
 }
 
-class ScoreBoardState extends State<ScoreBoard>{
+class TVState extends State<TV>{
+  String timer = "";
+
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
+     body: Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+          Color.fromARGB(255, 26, 31, 113),
+          Color.fromARGB(255, 34, 84, 164),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          stops: [0.1, 0.9]),
+        ),
+        child: Column(
+          children: [
+            const Image(image: AssetImage("visa.png"), height: 120),
+            Center(
+              child: Text(
+                timer,
+                style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: widget.tableGenerator.retail(true, context, timer, "jump"),
+              )
+            ),
+          ],
+        )
+      )
+    );
+  }
+}
+
+class OperatorBoard extends StatefulWidget{
+  final String game;
+  final Connector connector = const Connector();
+  final TableGenerator tableGenerator = const TableGenerator();
+
+  const OperatorBoard({super.key, required this.game});
+
+  @override
+  State<OperatorBoard> createState() => OperatorBoardState();
+}
+
+class OperatorBoardState extends State<OperatorBoard>{
   String timer = "";
   bool error = false;
 
@@ -23,8 +69,8 @@ class ScoreBoardState extends State<ScoreBoard>{
   Widget build(BuildContext context){
     TextEditingController controller = TextEditingController();
     return Scaffold(
-     body: SingleChildScrollView(
-      child: Column(
+     body: 
+     Column(
             children: [
               Container(
                 alignment: Alignment.centerRight,
@@ -48,11 +94,10 @@ class ScoreBoardState extends State<ScoreBoard>{
                   style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black),
                 ),
               ),
-              SizedBox(
-                width: double.maxFinite,
+              Flexible(
                 child: Padding(
                   padding: const EdgeInsets.all(10),
-                  child: retail()
+                  child: widget.tableGenerator.retail(false, context, timer, widget.game),
                 )
               ),
               Padding(
@@ -95,69 +140,7 @@ class ScoreBoardState extends State<ScoreBoard>{
                 },),
               ),
             ],
-          )
-     ),
+          ),
     );
-  }
-
-  Widget table(List<DataRow> dataRows){
-    return DataTable(
-      dataRowHeight: 50,
-      columns: const [
-        DataColumn(label: Text("ID")),
-        DataColumn(label: Text("Last Name")),
-        DataColumn(label: Text("Jump")),
-        DataColumn(label: Text("Dribble")),
-        DataColumn(label: Text("Pass")),
-        DataColumn(label: Text("Accuracy")),
-        DataColumn(label: Text("")),
-      ], 
-      rows: dataRows
-    );
-  }
-
-  Widget retail(){
-    return TimerBuilder.periodic(const Duration(seconds: 3), builder: (context){
-      return FutureBuilder(
-        future: generate(),
-        builder: (context, AsyncSnapshot<dynamic> snapshot){
-          if(snapshot.hasData){
-            return table(snapshot.data);
-          } else {
-            return const Center(child: CircularProgressIndicator(),);
-          }
-        });
-    });
-  }
-
-  Future<List<DataRow>> generate() async {
-    try{
-      var response = await widget.connector.getScoreBoardData();
-      Map<String, dynamic> data = response;
-      List<DataRow> dataRows = [];
-      List<ScoreRow> cells = [];
-      timer = "Match #00${data["id"]} - ${DateTime.now().hour}:${DateTime.now().minute}";
-      if(response["players"] != null){
-        (data["players"] as Map<String, dynamic>).forEach((key, value) {
-          cells.add(ScoreRow.fromJson({key: value})); 
-        }); 
-      }
-      for(int index = 0; index < cells.length; index++){
-        dataRows.add(DataRow(
-          onLongPress: () => Routemaster.of(context).push("/${widget.game}/?id=${cells.elementAt(index).id}"), 
-          cells: [
-            DataCell(cells.elementAt(index).getPlayerNumber(null)), 
-            DataCell(cells.elementAt(index).getLastName(null)), 
-            DataCell(cells.elementAt(index).getJump(null)), 
-            DataCell(cells.elementAt(index).getDribbling(null)), 
-            DataCell(cells.elementAt(index).getPass(null)), 
-            DataCell(cells.elementAt(index).getAccuracy(null)), 
-            DataCell(cells.elementAt(index).getDeleteButton())],),);
-      }
-      return dataRows;
-    } catch (e){
-      debugPrint("[Error on generate()]: $e");
-      return [];
-    }
   }
 }
