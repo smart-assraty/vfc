@@ -66,6 +66,9 @@ class ScoreRow{
   }
 
   Widget getJump(Color? color){
+    if(jump == 200){
+      jump = 0;
+    }
     return Text("$jump см", style: TextStyle(fontSize: 24, color: color),);
   }
 
