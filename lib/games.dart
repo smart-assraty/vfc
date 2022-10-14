@@ -127,15 +127,15 @@ class DribblePageState extends State<DribblePage>{
                 clicked = true;
               });
               try{
+                var response = await post(Uri.parse("$server:8000/dribbling_result/"),
+                  headers: {"Content-type": "application/json"},
+                  body: json.encode({
+                  "player_id": int.parse(widget.id),
+                  "time": int.parse(controllerOne.text),
+                  "cone": int.parse(controllerTwo.text),
+                  })
+                );
               if(tries != "3/3"){
-                  var response = await post(Uri.parse("$server:8000/dribbling_result/"),
-                    headers: {"Content-type": "application/json"},
-                    body: json.encode({
-                    "player_id": int.parse(widget.id),
-                    "time": int.parse(controllerOne.text),
-                    "cone": int.parse(controllerTwo.text),
-                    })
-                  );
                   var theJson = json.decode(response.body);
                   setState(() {
                     tries = utf8.decode(theJson["message"].toString().codeUnits);
